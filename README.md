@@ -44,7 +44,7 @@ I explain this in the [Parameter storage](./Parameter.md) document.
 
 ## AT command interface
 Another method to set the parameters is over the USB connection with AT commands.
-The manual for all AT commands is in the [AT Command Manual](./AT-Commands.md)
+The manual for all AT commands is in the [AT Command Manual](./AT-Command.md)
 After setting the parameters over with the AT commands, they are stored in the nonvolitale memory.
 
 Using the AT commands avoids to have to create different binary files for different devices. You can keep the default settings and just setup each indivual device over the USB port.
