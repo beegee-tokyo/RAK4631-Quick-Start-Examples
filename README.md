@@ -33,6 +33,90 @@ All of above I usually have in my applications and I do not want to rewrite it e
 
 And (7) and (8) are a standardized loop function that is sleeping until it gets woken up by an event.
 
+# How to use the container
+
+All the application code is in **`app.cpp`** and **`app.h`**.    
+In **`app.h`** all global definitions and required include files (e.g. for libraries) are placed.    
+**`app.cpp`** is replacing the Arduino loop() function. Only that it does not run as a loop, wasting battery power.    
+In **`app.cpp`** you find `setup_app()`. This function is called at the very startup of the device. You place here the initializations for your application, like setup of sensor libraries.  And there is a second function `init_app()`. This function is called after BLE and LoRa/LoRaWAN are completely intialized.    
+
+Here is an example for `init_app()` where I initialize an interrupt input from a PIR sensor:
+```c++
+bool init_app(void)
+{
+	// Add your application specific initialization here
+	pinMode(PIR_PIN, INPUT);
+	attachInterrupt(PIR_PIN, pir_triggered, RISING);
+	return true;
+}
+```
+`pir_triggered` is the interrupt callback, I will explain in more details later.
+
+Then there are three event handlers, `app_event_handler()`, `ble_data_handler()` and `lora_data_handler()`. These three functions are called on different events.
+
+## `app_event_handler`
+The [parameters](#parameters) have a setup for a periodic happening event. In the parameters it is defined how often this event, called **STATUS**, is happening. It can be used to either send periodic packets over LoRaWAN or read a sensor or a GPS module. You can as well define your own additional events, that can be e.g. triggered by interrupts from an external device or sensor.    
+The ID's for these additional events are defined in `app.h`. There are a few examples listed there:
+```c++
+/** Examples for application events */
+#define AT_CMD 0b0000000000010000
+#define N_AT_CMD 0b1111111111101111
+#define PIR_TRIGGER 0b0000000000100000
+#define N_PIR_TRIGGER 0b1111111111011111
+#define BUTTON 0b0000000001000000
+#define N_BUTTON 0b1111111110111111
+```
+Make sure that the events are all a unique number and use only a single bit. You have the option to define up to 28 application events. 4 events are already occupied by the LoRa/LoRaWAN and BLE events.    
+Each event flag should have a clear mask as well. You will see the usage below.    
+
+To handle these events, you have to add an event handler inside of `app_event_handler()`. In the example below, I use the example event `PIR_TRIGGER`:    
+```c++
+	// Timer triggered event
+	if ((g_task_event_type & PIR_TRIGGER) == PIR_TRIGGER)
+	{
+		/**************************************************************/
+		/**************************************************************/
+		/// \todo IMPORTANT, YOU MUST CLEAR THE EVENT FLAG HERE
+		/**************************************************************/
+		/**************************************************************/
+		g_task_event_type &= N_PIR_TRIGGER;
+		MYLOG("APP", "PIR triggered");
+
+		/**************************************************************/
+		/**************************************************************/
+		/// \todo read sensor or whatever you need to do when
+		/// \todo the PIR motion sensor was triggered
+		/**************************************************************/
+		/**************************************************************/
+
+	}
+```
+
+Now to trigger the event _**PIR_TRIGGER**_ we need an interrupt callback, which is called when the PIR sensor signals a motion detection.
+```c++
+void pir_triggered(void)
+{
+	// Define the event type
+	g_task_event_type |= PIR_TRIGGER;
+	// Wake up the handler, it will check g_task_event_type and know that he has to handle an PIR alarm.
+	xSemaphoreGiveFromISR(g_task_sem, pdFALSE);
+
+}
+```
+
+## `ble_data_handler()`
+This handler is called when data was received over the BLE UART service. You can ignore it, or use the received data for your own application
+
+## `lora_data_handler()`
+This handler is called when data was received over over LoRa or LoRaWAN. You can ignore it, or use the received data for your own application
+
+_**That is basically all you need to do to add your own application to a working LoRaWAN and BLE container.**_
+
+Read on below if you want to know more about the container functions itself.
+
+----
+----
+
 # Let's look a little bit deeper into these "standard" functionality.
 
 ## Parameters
