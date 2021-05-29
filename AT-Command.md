@@ -493,7 +493,7 @@ OK
 
 Description: LoRaWAN® network join mode
 
-This command allows the user to access and configure the activation method of the device either OTAA or ABP.
+This command allows the user to access and configure the activation method of the device either OTAA or ABP. A value of 0 means OTAA join mode, a value of 1 means ABP join mode
 
 | Command                    | Input Parameter | Return Value                                                  | Return Code              |
 | -------------------------- | --------------- | ------------------------------------------------------------- | ------------------------ |
@@ -737,6 +737,10 @@ OK
 AT+BAND=?
 
 +BAND:10
+OK
+
+AT+BAND=10
+
 OK
 
 AT+BAND=22
@@ -1323,3 +1327,10 @@ _**M in the following list is the length with MAC header, N is the maximum usabl
 | 6         | 250         | 242         |
 | 7         | 250         | 242         |
 | 8 ~ 15    | Not Defined | Not Defined |
+
+----
+
+_**LoRa® is a registered trademark or service mark of Semtech Corporation or its affiliates.**_    
+_**LoRaWAN® is a licensed mark.**_
+
+----

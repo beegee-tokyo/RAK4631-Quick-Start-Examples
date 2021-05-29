@@ -15,6 +15,8 @@
 
 #include <Arduino.h>
 /** Add you required includes after Arduino.h */
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME680.h>
 
 /** Application function definitions */
 void setup_app(void);
@@ -32,5 +34,9 @@ void lora_rx_failed(void);
 #define N_PIR_TRIGGER 0b1111111111011111
 #define BUTTON 0b0000000001000000
 #define N_BUTTON 0b1111111110111111
+
+/** Sensor specific functions */
+bool init_bme680(void);
+uint8_t bme680_get();
 
 #endif

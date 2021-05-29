@@ -161,8 +161,8 @@ void loop()
 
 			if (ble_data_handler != NULL)
 			{ 
-			// Handle BLE UART events
-			ble_data_handler();
+				// Handle BLE UART events
+				ble_data_handler();
 			}
 
 			// Handle LoRa data events

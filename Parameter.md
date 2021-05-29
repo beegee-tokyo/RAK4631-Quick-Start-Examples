@@ -5,15 +5,15 @@ In case the setup of the LoRaWAN parameters should be fixed in the application s
 ----
 
 ## Content
-[Setup for LoRaWAN](#setup-for-lorawan)    
-- [LoRaWAN parameters](#lorawan-parameters)    
+[Setup for LoRaWAN®](#setup-for-lorawan)    
+- [LoRaWAN® parameters](#lorawan-parameters)    
 
-[Setup for LoRa](#setup-for-lora)    
-- [LoRa parameters](#lora-parameters)
+[Setup for LoRa®](#setup-for-lora)    
+- [LoRa® parameters](#lora-parameters)
 
 ----
 
-## Setup for LoRaWAN
+## Setup for LoRaWAN®
 ```c++  
 struct s_lorawan_settings
 {

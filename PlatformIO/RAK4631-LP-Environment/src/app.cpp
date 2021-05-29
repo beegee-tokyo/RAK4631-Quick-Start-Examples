@@ -14,10 +14,13 @@
 #include "main.h"
 
 /** Set the device name, max length is 10 characters */
-char ble_dev_name[10] = "RAK";
+char ble_dev_name[10] = "RAK-ENV";
 
 /** Just for the example we add the number of packets to each LoRaWAN packet */
 uint32_t packet_counter = 0;
+
+/** Packet buffer for sending */
+uint8_t collected_data[64] = {0};
 
 /**
  * @brief Application specific setup functions
@@ -45,6 +48,11 @@ void setup_app(void)
 bool init_app(void)
 {
 	// Add your application specific initialization here
+	if (!init_bme680())
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -63,32 +71,6 @@ void app_event_handler(void)
 
 		/**************************************************************/
 		/**************************************************************/
-		/// \todo read sensor or whatever you need to do frequently
-		/// \todo write your data into a char array
-		/// \todo call LoRa P2P send_lora_packet()
-		/**************************************************************/
-		/**************************************************************/
-
-		uint8_t collected_data[8] = {0};
-		uint8_t data_size = 0;
-		collected_data[data_size++] = 'C';
-		collected_data[data_size++] = 'N';
-		collected_data[data_size++] = 'T';
-		collected_data[data_size++] = ':';
-		collected_data[data_size++] = ' ';
-		char pck_cnt[6] = {0};
-		int len = sprintf(pck_cnt, "%ld", packet_counter);
-		for (int i = 0; i < len; i++)
-		{
-			collected_data[data_size++] = pck_cnt[i];
-		}
-		packet_counter++;
-		send_lora_packet(collected_data, data_size);
-
-		MYLOG("APP", "LoRa package sent");
-
-		/**************************************************************/
-		/**************************************************************/
 		/// \todo Just as example, if BLE is enabled and you want
 		/// \todo to restart advertising on an event you can call
 		/// \todo restart_advertising(uint16_t timeout); to advertise
@@ -99,6 +81,19 @@ void app_event_handler(void)
 		{
 			restart_advertising(15);
 		}
+
+		/**************************************************************/
+		/**************************************************************/
+		/// \todo read sensor or whatever you need to do frequently
+		/// \todo write your data into a char array
+		/// \todo call LoRa P2P send_lora_packet()
+		/**************************************************************/
+		/**************************************************************/
+
+		uint8_t data_size = bme680_get();
+		send_lora_packet(collected_data, data_size);
+
+		MYLOG("APP", "LoRa package sent");
 	}
 }
 
