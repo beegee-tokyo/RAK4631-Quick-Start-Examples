@@ -182,7 +182,9 @@ build_flags =
 	-DNO_BLE_LED=1  ; if set, BLE LED is disabled. Remove define or comment it out to enable the BLE LED.
 ```
 
-**5) Example application.** Check out this example code for an environment sensor node, using the RAK1906 module ==> [RAK4631-LP-Environment](./PlatformIO/RAK4631-LP-Environment).
+**5) Example application.** There are two examples how to use the container.    
+_Example 1_ is based on timer events and reads a RAK1906 environment sensor frequently and sends a data packet ==> [RAK4631-LP-Environment](./PlatformIO/RAK4631-LP-Environment).     
+_Example 2_ is interrupt driven and sends a packet when an acceleration in x, y or z axis was detected by the RAK1904 module ==> [RAK4631-LP-Acceleration](./PlatformIO/RAK4631-LP-Acceleration)
 
 ----
 

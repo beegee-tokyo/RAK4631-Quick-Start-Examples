@@ -1,6 +1,9 @@
-# LoRaWAN node for environment sensing
+# LoRaWAN node for acceleration sensing
 
-This app uses the RAK1906 to measure temperature, humidity, barometric pressure and air quality (as gas resistance) and transmit the data over LoRaWAN.
+This app uses the RAK1904 to device movement in x, y and z axis and transmit the data over LoRaWAN. This example is complete driven by interrupts of the acceleration sensor and data is only transmitted on movement detection.
+The periodic sending should be disabled.
+
+To avoid sending packets too often, the minimum frequency for sending packets it 10 seconds. 
 
 This example has BLE enabled, so you can setup the LoRaWAN parameters over BLE. 
 Debug output is enabled as well. If you want to measure current consumption, you should disable the debug output in platformio.ini by setting `MY_DEBUG` to 0:
