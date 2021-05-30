@@ -26,11 +26,9 @@ void lora_tx_finished(bool success);
 void lora_rx_failed(void);
 
 /** Examples for application events */
-#define AT_CMD 0b0000000000010000
-#define N_AT_CMD 0b1111111111101111
-#define PIR_TRIGGER 0b0000000000100000
+#define PIR_TRIGGER   0b0000000000100000
 #define N_PIR_TRIGGER 0b1111111111011111
-#define BUTTON 0b0000000001000000
-#define N_BUTTON 0b1111111110111111
+#define BUTTON        0b0000000001000000
+#define N_BUTTON      0b1111111110111111
 
 #endif

@@ -79,14 +79,12 @@ The [parameters](#parameters) have a setup for a periodic happening event. In th
 The ID's for these additional events are defined in `app.h`. There are a few examples listed there:
 ```c++
 /** Examples for application events */
-#define AT_CMD        0b0000000000010000
-#define N_AT_CMD      0b1111111111101111
 #define PIR_TRIGGER   0b0000000000100000
 #define N_PIR_TRIGGER 0b1111111111011111
 #define BUTTON        0b0000000001000000
 #define N_BUTTON      0b1111111110111111
 ```
-Make sure that the events are all a unique number and use only a single bit. You have the option to define up to 28 application events. 4 events are already occupied by the LoRa®/LoRaWAN® and BLE events.    
+Make sure that the events are all a unique number and use only a single bit. You have the option to define up to 28 application events. 5 events are already occupied by the LoRa®/LoRaWAN® and BLE events.    
 Each event flag should have a clear mask as well. You will see the usage below.    
 
 To handle these events, you have to add an event handler inside of `app_event_handler()`. In the example below, I use the example event `PIR_TRIGGER`:    

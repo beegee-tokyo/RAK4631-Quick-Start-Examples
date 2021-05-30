@@ -246,7 +246,7 @@ static void lpwan_rx_handler(lmh_app_data_t *app_data)
 		// Copy the data into loop data buffer
 		memcpy(g_rx_lora_data, app_data->buffer, app_data->buffsize);
 		g_rx_data_len = app_data->buffsize;
-		g_task_event_type |= STATUS;
+		g_task_event_type |= LORA_DATA;
 		// Notify task about the event
 		if (g_task_sem != NULL)
 		{
@@ -266,7 +266,7 @@ static void lpwan_class_confirm_handler(DeviceClass_t Class)
 	MYLOG("LORA", "switch to class %c done", "ABC"[Class]);
 
 	// Wake up task to send initial packet
-	g_task_event_type |= LORA_DATA;
+	g_task_event_type |= STATUS;
 	// Notify task about the event
 	if (g_task_sem != NULL)
 	{
@@ -290,7 +290,7 @@ bool send_lora_packet(uint8_t *data, uint8_t size)
 		return false;
 	}
 
-	m_lora_app_data.port = LORAWAN_APP_PORT;
+	m_lora_app_data.port = g_lorawan_settings.app_port;
 
 	m_lora_app_data.buffsize = size;
 
