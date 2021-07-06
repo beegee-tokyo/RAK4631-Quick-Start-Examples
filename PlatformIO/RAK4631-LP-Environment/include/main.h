@@ -50,8 +50,10 @@ extern SoftwareTimer g_task_wakeup_timer;
 #define N_BLE_DATA   0b1111111111111011
 #define LORA_DATA    0b0000000000001000
 #define N_LORA_DATA  0b1111111111110111
-#define AT_CMD       0b0000000000010000
-#define N_AT_CMD     0b1111111111101111
+#define LORA_TX_FIN   0b0000000000010000
+#define N_LORA_TX_FIN 0b1111111111101111
+#define AT_CMD        0b0000000000100000
+#define N_AT_CMD      0b1111111111011111
 
 // BLE
 #include <bluefruit.h>
@@ -72,8 +74,9 @@ extern bool enable_ble;
 #endif
 
 int8_t init_lora(void);
-bool send_lora_packet(uint8_t *data, uint8_t size);
+lmh_error_status send_lora_packet(uint8_t *data, uint8_t size);
 extern bool lpwan_has_joined;
+extern bool g_rx_fin_result;
 
 #define LORAWAN_DATA_MARKER 0x57
 struct s_lorawan_settings

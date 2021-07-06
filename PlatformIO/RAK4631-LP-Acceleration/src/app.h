@@ -27,10 +27,10 @@ void lora_tx_finished(bool success);
 void lora_rx_failed(void);
 
 /** Examples for application events */
-#define ACC_TRIGGER   0b0000000000100000
-#define N_ACC_TRIGGER 0b1111111111011111
-#define SEND_STAT     0b0000000001000000
-#define N_SEND_STAT   0b1111111110111111
+#define ACC_TRIGGER   0b1000000000000000
+#define N_ACC_TRIGGER 0b0111111111111111
+#define SEND_STAT     0b0100000000000000
+#define N_SEND_STAT   0b1011111111111111
 
 /** Sensor specific functions */
 #define INT1_PIN WB_IO1

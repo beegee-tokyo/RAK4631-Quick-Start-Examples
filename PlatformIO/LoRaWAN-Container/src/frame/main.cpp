@@ -160,9 +160,9 @@ void loop()
 			app_event_handler();
 
 			if (ble_data_handler != NULL)
-			{ 
-			// Handle BLE UART events
-			ble_data_handler();
+			{
+				// Handle BLE UART events
+				ble_data_handler();
 			}
 
 			// Handle LoRa data events
@@ -200,6 +200,9 @@ void loop()
 			}
 		}
 		MYLOG("MAIN", "Loop goes to sleep");
+#if MY_DEBUG > 0
+		Serial.flush();
+#endif
 		g_task_event_type = 0;
 		// Go back to sleep
 		xSemaphoreTake(g_task_sem, 10);

@@ -82,9 +82,21 @@ void app_event_handler(void)
 		{
 			collected_data[data_size++] = pck_cnt[i];
 		}
-		packet_counter++;
-		send_lora_packet(collected_data, data_size);
-
+		// packet_counter++;
+		lmh_error_status result = send_lora_packet(collected_data, data_size);
+		switch (result)
+		{
+		case LMH_SUCCESS:
+			MYLOG("APP", "Packet enqueued");
+			packet_counter++;
+			break;
+		case LMH_BUSY:
+			MYLOG("APP", "LoRa transceiver is busy");
+			break;
+		case LMH_ERROR:
+			MYLOG("APP", "Packet error, too big to send with current DR");
+			break;
+		}
 		MYLOG("APP", "LoRa package sent");
 
 		/**************************************************************/
@@ -171,23 +183,19 @@ void lora_data_handler(void)
 			ble_uart.println("");
 		}
 	}
-}
 
-/**
- * @brief Callback from LoRa events after TX finished
- * 
- * @param success true if TX success, else false
- */
-void lora_tx_finished(bool success)
-{
-	MYLOG("APP", "TX %s", success ? "success" : "failed");
-}
+	// LoRa TX finished handling
+	if ((g_task_event_type & LORA_TX_FIN) == LORA_TX_FIN)
+	{
+		/**************************************************************/
+		/**************************************************************/
+		/// \todo LoRaWAN TX cycle (including RX1 and RX2 window) finished
+		/// \todo can be used to enable next sending
+		/// \todo if confirmed packet sending, g_rx_fin_result holds the result of the transmission
+		/**************************************************************/
+		/**************************************************************/
+		g_task_event_type &= N_LORA_TX_FIN;
 
-/**
- * @brief Callback when RX failed either by timeout or by CRC error
- * 
- */
-void lora_rx_failed(void)
-{
-	MYLOG("APP", "RX failure");
+		MYLOG("APP", "LPWAN TX cycle %s", g_rx_fin_result ? "finished ACK" : "failed NAK");
+	}
 }

@@ -87,7 +87,7 @@ void init_ble(void)
 
 	// Configure and Start Device Information Service
 #ifdef _VARIANT_ISP4520_
-	ble_dis.setManufacturer("Insigh_SIP");
+	ble_dis.setManufacturer("Insight_SIP");
 
 	ble_dis.setModel("ISP4520");
 #else
@@ -96,8 +96,7 @@ void init_ble(void)
 	ble_dis.setModel("RAK4631");
 #endif
 
-	// sprintf(helper_string, "%f", SW_VERSION);
-	sprintf(helper_string, "%d.%d.%d.%d", SW_VERSION_1, SW_VERSION_2, SW_VERSION_3, SW_VERSION_4);
+	sprintf(helper_string, "%d.%d.%d", SW_VERSION_1, SW_VERSION_2, SW_VERSION_3);
 	ble_dis.setSoftwareRev(helper_string);
 
 	ble_dis.setHardwareRev("52840");

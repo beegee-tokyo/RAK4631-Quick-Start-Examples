@@ -760,7 +760,7 @@ static int at_query_snr(void)
  */
 static int at_query_version(void)
 {
-	snprintf(g_at_query_buf, ATQUERY_SIZE, "%d.%d.%d.%d %s %s", SW_VERSION_1, SW_VERSION_2, SW_VERSION_3, SW_VERSION_4, __DATE__, __TIME__);
+	snprintf(g_at_query_buf, ATQUERY_SIZE, "%d.%d.%d %s %s", SW_VERSION_1, SW_VERSION_2, SW_VERSION_3, __DATE__, __TIME__);
 
 	return 0;
 }

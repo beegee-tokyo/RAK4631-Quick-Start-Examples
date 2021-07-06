@@ -28,10 +28,10 @@ void lora_tx_finished(bool success);
 void lora_rx_failed(void);
 
 /** Examples for application events */
-#define PIR_TRIGGER   0b0000000000100000
-#define N_PIR_TRIGGER 0b1111111111011111
-#define BUTTON        0b0000000001000000
-#define N_BUTTON      0b1111111110111111
+#define PIR_TRIGGER   0b1000000000000000
+#define N_PIR_TRIGGER 0b0111111111111111
+#define BUTTON        0b0100000000000000
+#define N_BUTTON      0b1011111111111111
 
 /** Sensor specific functions */
 bool init_bme680(void);

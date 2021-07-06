@@ -30,6 +30,8 @@ int8_t last_snr = 0;
 
 /** Flag if LoRaWAN is initialized and started */
 bool g_lorawan_initialized = false;
+/** Result of last TX */
+bool g_rx_fin_result;
 
 /**************************************************************/
 /* LoRaWAN properties                                            */
@@ -48,6 +50,10 @@ static void lpwan_join_fail_handler(void);
 static void lpwan_rx_handler(lmh_app_data_t *app_data);
 /** LoRaWAN callback after class change request finished */
 static void lpwan_class_confirm_handler(DeviceClass_t Class);
+/** LoRaWAN callback after class change request finished */
+static void lpwan_unconfirm_tx_finished(void);
+/** LoRaWAN callback after class change request finished */
+static void lpwan_confirm_tx_finished(bool result);
 /** LoRaWAN Function to send a package */
 bool send_lpwan_packet(void);
 
@@ -65,9 +71,9 @@ bool send_lpwan_packet(void);
 static lmh_param_t lora_param_init;
 
 /** Structure containing LoRaWan callback functions, needed for lmh_init() */
-static lmh_callback_t lora_callbacks = {get_lora_batt, BoardGetUniqueId, BoardGetRandomSeed,
-										lpwan_rx_handler, lpwan_joined_handler,
-										lpwan_class_confirm_handler, lpwan_join_fail_handler};
+static lmh_callback_t lora_callbacks = {get_lora_batt, BoardGetUniqueId, BoardGetRandomSeed, lpwan_rx_handler,
+										lpwan_joined_handler, lpwan_class_confirm_handler, lpwan_join_fail_handler,
+										lpwan_unconfirm_tx_finished, lpwan_confirm_tx_finished};
 
 bool lpwan_has_joined = false;
 
@@ -214,35 +220,6 @@ static void lpwan_rx_handler(lmh_app_data_t *app_data)
 	last_rssi = app_data->rssi;
 	last_snr = app_data->snr;
 
-	switch (app_data->port)
-	{
-	case 3:
-		// Port 3 switches the class
-		if (app_data->buffsize == 1)
-		{
-			switch (app_data->buffer[0])
-			{
-			case 0:
-				lmh_class_request(CLASS_A);
-				MYLOG("LORA", "Request to switch to class A");
-				break;
-
-			case 1:
-				lmh_class_request(CLASS_B);
-				MYLOG("LORA", "Request to switch to class B");
-				break;
-
-			case 2:
-				lmh_class_request(CLASS_C);
-				MYLOG("LORA", "Request to switch to class C");
-				break;
-
-			default:
-				break;
-			}
-		}
-		break;
-	case LORAWAN_APP_PORT:
 		// Copy the data into loop data buffer
 		memcpy(g_rx_lora_data, app_data->buffer, app_data->buffsize);
 		g_rx_data_len = app_data->buffsize;
@@ -254,7 +231,6 @@ static void lpwan_rx_handler(lmh_app_data_t *app_data)
 			xSemaphoreGive(g_task_sem);
 		}
 	}
-}
 
 /**
  * @brief Callback for class switch confirmation
@@ -276,18 +252,46 @@ static void lpwan_class_confirm_handler(DeviceClass_t Class)
 	lpwan_has_joined = true;
 }
 
+static void lpwan_unconfirm_tx_finished(void)
+{
+	MYLOG("LORA", "Uncomfirmed TX finished");
+	g_rx_fin_result = true;
+	// Wake up task to send initial packet
+	g_task_event_type |= LORA_TX_FIN;
+	// Notify task about the event
+	if (g_task_sem != NULL)
+	{
+		MYLOG("LORA", "Waking up loop task");
+		xSemaphoreGive(g_task_sem);
+	}
+}
+
+static void lpwan_confirm_tx_finished(bool result)
+{
+	MYLOG("LORA", "Comfirmed TX finished with result %s", result ? "ACK" : "NAK");
+	g_rx_fin_result = result;
+	// Wake up task to send initial packet
+	g_task_event_type |= LORA_TX_FIN;
+	// Notify task about the event
+	if (g_task_sem != NULL)
+	{
+		MYLOG("LORA", "Waking up loop task");
+		xSemaphoreGive(g_task_sem);
+	}
+}
+
 /**
  * @brief Send a LoRaWan package
  * 
  * @return result of send request
  */
-bool send_lora_packet(uint8_t *data, uint8_t size)
+lmh_error_status send_lora_packet(uint8_t *data, uint8_t size)
 {
 	if (lmh_join_status_get() != LMH_SET)
 	{
 		//Not joined, try again later
 		MYLOG("LORA", "Did not join network, skip sending frame");
-		return false;
+		return LMH_ERROR;
 	}
 
 	m_lora_app_data.port = g_lorawan_settings.app_port;
@@ -296,7 +300,5 @@ bool send_lora_packet(uint8_t *data, uint8_t size)
 
 	memcpy(m_lora_app_data_buffer, data, size);
 
-	lmh_error_status error = lmh_send(&m_lora_app_data, g_lorawan_settings.confirmed_msg_enabled);
-
-	return (error == 0);
+	return lmh_send(&m_lora_app_data, g_lorawan_settings.confirmed_msg_enabled);
 }

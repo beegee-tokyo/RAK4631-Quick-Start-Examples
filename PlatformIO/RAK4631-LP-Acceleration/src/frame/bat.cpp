@@ -12,7 +12,7 @@
 #include "main.h"
 
 /** Millivolts per LSB 3.0V ADC range and 12-bit ADC resolution = 3000mV/4096 */
-#define VBAT_MV_PER_LSB (0.73242188F) 
+#define VBAT_MV_PER_LSB (0.73242188F)
 /** Compensation factor for the VBAT divider */
 #define VBAT_DIVIDER_COMP (1.73)
 /** Real milli Volts per LSB including compensation */
@@ -82,10 +82,10 @@ uint8_t mv_to_percent(float mvolts)
 
 /**
  * @brief Read the battery level as value
- * between 0 and 255. This is used in LoRaWan status requests
+ * between 0 and 254. This is used in LoRaWan status requests
  * as the battery level
  * 
- * @return uint8_t Battery level as value between 0 and 255
+ * @return uint8_t Battery level as value between 0 and 254
  */
 uint8_t get_lora_batt(void)
 {
@@ -94,5 +94,5 @@ uint8_t get_lora_batt(void)
 	{
 		read_val += read_batt();
 	}
-	return (mv_to_percent(read_batt()) * 2.55);
+	return (mv_to_percent(read_val / 10) * 2.54);
 }
