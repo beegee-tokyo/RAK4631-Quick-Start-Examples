@@ -1,7 +1,14 @@
 | ![RAKwireless](./assets/RAK.png) | ![RAKstar](./assets/rakstar.jpg) | ![WisBlock](./assets/WisBlock.png) |
 | :-: | :-: | :-: |
 
-_**WORK IN PROGRESS! ONLY LORAWAN VERSION FOR PLATFORMIO IS READY**_
+_**What started here as a frame for an application has now been moved into an Arduino Library that can be used for both Arduino IDE and PlatformIO.**_
+_**Check out the [WisBlock-API](https://github.com/beegee-tokyo/WisBlock-API) for the latest updated version**_
+_**The WisBlock-API has been used in the following PlatformIO projects:**_
+- _**[RAK4631-Kit-4-RAK1906](https://github.com/beegee-tokyo/RAK4631-Kit-4-RAK1906) Environment sensor application for the [WisBlock Kit 4](https://store.rakwireless.com/collections/kits-bundles/products/wisblock-kit-4-air-quality-monitor)**_
+- _**[RAK4631-Kit-2-RAK1910-RAK1904-RAK1906](https://github.com/beegee-tokyo/RAK4631-Kit-2-RAK1910-RAK1904-RAK1906) LPWAN GNSS tracker application for the [WisBlock Kit 2](https://store.rakwireless.com/collections/kits-bundles/products/wisblock-kit-2-lora-based-gps-tracker-with-solar-panel)**_
+- _**[RAK4631-Kit-2-RAK12500-RAK1906](https://github.com/beegee-tokyo/RAK4631-Kit-2-RAK12500-RAK1906) LPWAN GNSS tracker application using the [RAK12500](https://store.rakwireless.com/products/wisblock-gnss-location-module-rak12500)**_
+
+~~_**WORK IN PROGRESS! ONLY LORAWAN VERSION FOR PLATFORMIO IS READY**_~~
 
 # Container for your next LoRa® / LoRaWAN® application
 
@@ -131,7 +138,7 @@ This handler is called when data was received over over LoRa® or LoRaWAN®. Her
 _**That is basically all you need to do to add your own application to a working LoRaWAN and BLE container.**_
 
 ## How to setup the LoRaWAN®/LoRa® parameters
-The easiest way to setup the parameters are by using the USB interface and the AT command interface. After the RAK4631 is flashed, connect a serial terminal application and setup all required parameters using the [AT commands](./AT-Command.md).
+The easiest way to setup the parameters are by using the USB interface and the AT command interface. After the RAK4631 is flashed, connect a serial terminal application and setup all required parameters using the [AT commands](./AT-Commands.md).
 
 An example for a typical setup for LoRaWAN, region AS923-3, using OTAA, period time for frequent actions set to 60 seconds and automatic join network after reboot:
 ```c++
@@ -203,7 +210,7 @@ All parameters can be preset in the **`main.h`** include file.
 I explain this in the [Parameter storage](./Parameter.md) document.
 
 ## AT command interface
-The manual for all AT commands is in the [AT Command Manual](./AT-Command.md)
+The manual for all AT commands is in the [AT Command Manual](./AT-Commands.md)
 After setting the parameters over with the AT commands, they are stored in the nonvolitale memory.
 
 Using the AT commands avoids to have to create different binary files for different devices. You can keep the default settings and just setup each indivual device over the USB port.

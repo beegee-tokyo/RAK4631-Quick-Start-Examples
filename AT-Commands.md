@@ -2,44 +2,40 @@
 
 To make it easy to setup the LoRaWAN credentials, an AT command interface over USB is implemented. It includes the basic commands required to define the node.
 
-----
+**Credits:**    
+Taylor Lee (taylor.lee@rakwireless.com)
 
+----
 ## Content
-[AT Command syntax](#at-command-syntax)    
-### General commands
-[AT? List of AT commands](#at?)    
-[ATR Restore default values](#atr)    
-[ATZ Reset the MCU](#atz)    
-### LoRaWAN keys, ID's, EUI's
-#### For OTAA
-[AT+APPEUI Get or set the application EUI](#at+appeui)    
-[AT+APPKEY Get or set the application key](#at+appkey)    
-[AT+DEVEUI Get or set the device EUI](#at+deveui)    
-#### For ABP
-[AT+APPSKEY Get or set the application session key](#at+appskey)    
-[AT+NWKSKEY Get or Set the network session key](#at+nwkskey)    
-[AT+DEVADDR Get or set the device address](#at+devaddr)    
-### Joining and sending data on LoRa network    
-[AT+CFM Get or set the confirm mode](#at+cfm)    
-[AT+JOIN Join network](#at+join)    
-[AT+NJS Get the join status](#at+njs)    
-[AT+NJM Get or set the network join mode](#at+njm)    
-[AT+SENDFREQ Get or Set the automatic send time](#at+sendfreq)    
-### LoRa network management    
-[AT+ADR Get or set the adaptive data rate setting](#at+adr)    
-[AT+CLASS Get or set the device class](#at+class)    
-[AT+DR Get or Set the Tx DataRate](#at+dr)    
-[AT+TXP Get or set the transmit power](#at+txp)    
-[AT+BAND Get and Set the LoRaWAN regions](#at+band)    
-### Status queries    
-[AT+BAT Get battery level](#at+bat)    
-[AT+RSSI Last RX packet RSSI](#at+rssi)    
-[AT+SNR Last RX packet SNR](#at+snr)    
-[AT+VER Get SW version](#at+ver)    
-## Appendix    
-[Appendix I Data Rate By Region](#appendix-i-data-rate-by-region)    
-[Appendix II TX Power By Region](#appendix-ii-tx-power-by-region)    
-[Appendix III Maximum Transmission Load By Region](#appendix-iii-maximum-transmission-load-by-region)    
+
+* [AT Command syntax](#at-command-syntax)
+* [AT?](#at)
+* [ATR](#atr)
+* [ATZ](#atz)
+* [AT+APPEUI](#atappeui)
+* [AT+APPKEY](#atappkey)
+* [AT+DEVEUI](#atdeveui)
+* [AT+APPSKEY](#atappskey)
+* [AT+NWKSKEY](#atnwkskey)
+* [AT+DEVADDR](#atdevaddr)
+* [AT+CFM](#atcfm)
+* [AT+JOIN](#atjoin)
+* [AT+NJS](#atnjs)
+* [AT+NJM](#atnjm)
+* [AT+SENDFREQ](#atsendfreq)
+* [AT+ADR](#atadr)
+* [AT+CLASS](#atclass)
+* [AT+DR](#atdr)
+* [AT+TXP](#attxp)
+* [AT+BAND](#atband)
+* [AT+BAT](#atbat)
+* [AT+RSSI](#atrssi)
+* [AT+SNR](#atsnr)
+* [AT+VER](#atver)
+* [Appendix](#appendix-1)
+	* [Appendix I Data Rate by Region](#appendix-i-data-rate-by-region)
+	* [Appendix II TX Power by Region](#appendix-ii-tx-power-by-region)
+	* [Appendix III Maximum Transmission Load by Region](#appendix-iii-maximum-transmission-load-by-region)
 
 ----
 
@@ -103,29 +99,29 @@ AT?
 +++++++++++++++
 AT command list
 +++++++++++++++
-AT?		AT commands
-ATR		Restore default
-ATZ		ATZ Trig a MCU reset
-AT+APPEUI		Get or set the application EUI
-AT+APPKEY	Get or set the application key
-AT+DEVEUI	Get or set the device EUI
-AT+APPSKEY	Get or set the application session key
-AT+NWKSKEY	Get or Set the network session key
-AT+DEVADDR	Get or set the device address
-AT+CFM	Get or set the confirm mode
-AT+JOIN	Join network
-AT+NJS	Get the join status
-AT+NJM	Get or set the network join mode
-AT+SENDFREQ	Get or Set the automatic send time
-AT+ADR	Get or set the adaptive data rate setting
-AT+CLASS	Get or set the device class
-AT+DR	Get or Set the Tx DataRate=[0..7]
-AT+TXP	Get or set the transmit power
-AT+BAND	Get and Set number corresponding to active regions
-AT+BAT	Get battery level
-AT+RSSI	Last RX packet RSSI
-AT+SNR	Last RX packet SNR
-AT+VER	Get SW version
+AT?         AT commands
+ATR         Restore default
+ATZ         Trig a MCU reset
+AT+APPEUI   Get or set the application EUI
+AT+APPKEY   Get or set the application key
+AT+DEVEUI   Get or set the device EUI
+AT+APPSKEY  Get or set the application session key
+AT+NWKSKEY  Get or Set the network session key
+AT+DEVADDR  Get or set the device address
+AT+CFM      Get or set the confirm mode
+AT+JOIN     Join network
+AT+NJS      Get the join status
+AT+NJM      Get or set the network join mode
+AT+SENDFREQ Get or Set the automatic send time
+AT+ADR      Get or set the adaptive data rate setting
+AT+CLASS    Get or set the device class
+AT+DR       Get or Set the Tx DataRate=[0..7]
+AT+TXP      Get or set the transmit power
+AT+BAND     Get and Set number corresponding to active regions
+AT+BAT      Get battery level
+AT+RSSI     Last RX packet RSSI
+AT+SNR      Last RX packet SNR
+AT+VER      Get SW version
 +++++++++++++++
 
 OK
@@ -431,12 +427,12 @@ This command allows the user to join a LoRaWAN® network.
 | AT+JOIN=`<Input Parameter>` | *Param1:Param2:Param3:Param4*                                                                      | -                                | OK                    |
 |                             | *Param1* = **Join command**: 1 for joining the network , 0 for stop joining                        |                                  |                       |
 |                             | *Param2* = **Auto-Join config**: 1 for Auto-join on power up) , 0 for no auto-join. (0 is default) |                                  |                       |
-|                             | *Param3* = **Reattempt interval**: 7 - 255 seconds (8 is default)                                  |                                  |                       |
+|                             | *Param3* = **Reattempt interval**: 7 - 255 seconds (30 is default)                                  |                                  |                       |
 |                             | *Param4* = **No. of join attempts**: 0 - 255 (0 is default)                                        |                                  |                       |
 
-_**This is an asynchronous command. OK means that the device is joining. The completion of the JOIN can be verified with AT+NJS=? command.**_
+_**This is an asynchronous command. OK means that the device is joining. The completion of the JOIN can be verified with AT+NJS=? command.**_    
 
-_**Param3 is not supported yet and is fixed to 8s always**_
+_**Param3 is not supported yet and is fixed to 30s always**_
 
 **Examples**:
 
