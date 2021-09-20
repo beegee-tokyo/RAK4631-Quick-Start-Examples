@@ -9,7 +9,7 @@
  * 
  */
 
-#include "main.h"
+#include "app.h"
 
 extern uint8_t collected_data[];
 

@@ -11,16 +11,19 @@
  * 
  */
 
-#include "main.h"
+#include "app.h"
 
 /** Set the device name, max length is 10 characters */
-char ble_dev_name[10] = "RAK-ENV";
+char g_ble_dev_name[10] = "RAK-ENV";
 
 /** Just for the example we add the number of packets to each LoRaWAN packet */
 uint32_t packet_counter = 0;
 
 /** Packet buffer for sending */
 uint8_t collected_data[64] = {0};
+
+/** Send Fail counter **/
+uint8_t send_fail = 0;
 
 /**
  * @brief Application specific setup functions
@@ -36,7 +39,7 @@ void setup_app(void)
 	/// \todo after reset or power-up
 	/**************************************************************/
 	/**************************************************************/
-	enable_ble = true;
+	g_enable_ble = true;
 }
 
 /**
@@ -77,7 +80,7 @@ void app_event_handler(void)
 		/// \todo for another <timeout> seconds
 		/**************************************************************/
 		/**************************************************************/
-		if (enable_ble)
+		if (g_enable_ble)
 		{
 			restart_advertising(15);
 		}
@@ -116,7 +119,7 @@ void app_event_handler(void)
  */
 void ble_data_handler(void)
 {
-	if (enable_ble)
+	if (g_enable_ble)
 	{
 		// BLE UART data handling
 		if ((g_task_event_type & BLE_DATA) == BLE_DATA)
@@ -128,7 +131,7 @@ void ble_data_handler(void)
 			/**************************************************************/
 			/**************************************************************/
 			g_task_event_type &= N_BLE_DATA;
-			String uart_rx_buff = ble_uart.readStringUntil('\n');
+			String uart_rx_buff = g_ble_uart.readStringUntil('\n');
 
 			uart_rx_buff.toUpperCase();
 
@@ -143,6 +146,64 @@ void ble_data_handler(void)
  */
 void lora_data_handler(void)
 {
+	if ((g_task_event_type & LORA_JOIN_FIN) == LORA_JOIN_FIN)
+	{
+		/**************************************************************/
+		/**************************************************************/
+		/// \todo LoRa Join finished
+		/// \todo If Join failed, Join request can be restarted here
+		/**************************************************************/
+		/**************************************************************/
+		g_task_event_type &= N_LORA_JOIN_FIN;
+		if (g_join_result)
+		{
+			MYLOG("APP", "Successfully joined network");
+		}
+		else
+		{
+			MYLOG("APP", "Join network failed");
+			/// \todo here join could be restarted.
+			lmh_join();
+
+			// If BLE is enabled, restart Advertising
+			if (g_enable_ble)
+			{
+				restart_advertising(15);
+			}
+		}
+	}
+
+	if ((g_task_event_type & LORA_TX_FIN) == LORA_TX_FIN)
+	{
+		/**************************************************************/
+		/**************************************************************/
+		/// \todo LoRaWAN TX cycle (including RX1 and RX2 window) finished
+		/// \todo can be used to enable next sending
+		/// \todo if confirmed packet sending, g_rx_fin_result holds the result of the transmission
+		/**************************************************************/
+		/**************************************************************/
+		g_task_event_type &= N_LORA_TX_FIN;
+
+		MYLOG("APP", "LPWAN TX cycle %s", g_rx_fin_result ? "finished ACK" : "failed NAK");
+		if (g_ble_uart_is_connected)
+		{
+			g_ble_uart.printf("LPWAN TX cycle %s", g_rx_fin_result ? "finished ACK" : "failed NAK");
+		}
+
+		if (!g_rx_fin_result)
+		{
+			// Increase fail send counter
+			send_fail++;
+
+			if (send_fail == 10)
+			{
+				// Too many failed sendings, reset node and try to rejoin
+				delay(100);
+				sd_nvic_SystemReset();
+			}
+		}
+	}
+
 	// LoRa data handling
 	if ((g_task_event_type & LORA_DATA) == LORA_DATA)
 	{
@@ -170,28 +231,13 @@ void lora_data_handler(void)
 		/// \todo for debugging
 		/**************************************************************/
 		/**************************************************************/
-		if (ble_uart_is_connected && enable_ble)
+		if (g_ble_uart_is_connected && g_enable_ble)
 		{
 			for (int idx = 0; idx < g_rx_data_len; idx++)
 			{
-				ble_uart.printf("%02X ", g_rx_lora_data[idx]);
+				g_ble_uart.printf("%02X ", g_rx_lora_data[idx]);
 			}
-			ble_uart.println("");
+			g_ble_uart.println("");
 		}
-	}
-
-	// LoRa TX finished handling
-	if ((g_task_event_type & LORA_TX_FIN) == LORA_TX_FIN)
-	{
-		/**************************************************************/
-		/**************************************************************/
-		/// \todo LoRaWAN TX cycle (including RX1 and RX2 window) finished
-		/// \todo can be used to enable next sending
-		/// \todo if confirmed packet sending, g_rx_fin_result holds the result of the transmission
-		/**************************************************************/
-		/**************************************************************/
-		g_task_event_type &= N_LORA_TX_FIN;
-
-		MYLOG("APP", "LPWAN TX cycle %s", g_rx_fin_result ? "finished ACK" : "failed NAK");
 	}
 }
